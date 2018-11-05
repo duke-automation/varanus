@@ -12,7 +12,7 @@ Gem::Specification.new do |spec|
   spec.summary       = %q{Interface for Sectigo's (formerly Comodo CA) API.}
   spec.description   = <<~DESCRIPTION
     This gem provides an interface to Sectigo's (formerly Comodo CA) APIs for working
-    with SSL certificates as well as its reporting API.
+    with SSL/TLS certificates as well as its reporting API.
 
     Support for Sectigo's other APIs (S/MIME, code signing, device certificates, etc) may
     be added at a later date.
