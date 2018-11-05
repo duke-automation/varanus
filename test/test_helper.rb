@@ -10,3 +10,10 @@ require 'varanus'
 
 require 'minitest/autorun'
 require 'minitest/rg'
+require 'webmock/minitest'
+
+class Minitest::Test
+  def setup
+    WebMock.disable_net_connect!
+  end
+end
