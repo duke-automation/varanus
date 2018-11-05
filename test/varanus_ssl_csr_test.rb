@@ -1,4 +1,4 @@
-require "test_helper"
+require 'test_helper'
 
 class VaranusSSLCSRTest < Minitest::Test
   def test_load_csr_cn_and_san

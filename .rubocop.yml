@@ -1,0 +1,68 @@
+AllCops:
+  TargetRubyVersion: 2.4
+
+Bundler/OrderedGems:
+  AutoCorrect: false
+
+Metrics/AbcSize:
+  Max: 25
+  Exclude:
+    - 'test/**/*'
+
+Metrics/ClassLength:
+  Max: 125
+  Exclude:
+    - 'test/**/*'
+
+Metrics/LineLength:
+  Max: 90
+
+Metrics/MethodLength:
+  Max: 20
+  Exclude:
+    - 'test/**/*'
+
+Naming/FileName:
+  Exclude:
+    - Gemfile
+
+Naming/UncommunicativeMethodParamName:
+  AllowedNames:
+    - gb
+    - id
+    - ip
+    - os
+    - vm
+
+Style/ClassAndModuleChildren:
+  Enabled: false
+
+Style/ConditionalAssignment:
+  Enabled: false
+
+Style/FrozenStringLiteralComment:
+  Enabled: false
+
+Style/MethodDefParentheses:
+  EnforcedStyle: require_no_parentheses_except_multiline
+
+Style/NumericPredicate:
+  EnforcedStyle: comparison
+
+Style/RescueModifier:
+  AutoCorrect: false
+
+Style/SymbolArray:
+  EnforcedStyle: brackets
+
+Style/TrailingCommaInArguments:
+  EnforcedStyleForMultiline: no_comma
+
+Style/TrailingCommaInArrayLiteral:
+  EnforcedStyleForMultiline: no_comma
+
+Style/TrailingCommaInHashLiteral:
+  EnforcedStyleForMultiline: no_comma
+
+Style/WordArray:
+  EnforcedStyle: brackets
