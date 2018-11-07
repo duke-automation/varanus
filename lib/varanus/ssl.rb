@@ -43,6 +43,15 @@ class Varanus::SSL
     get("collect/#{id}/#{type}")
   end
 
+  # Revoke an ssl cert
+  # +id+ is the ID returned by #sign
+  # +reason+ should be a non-blank String.  Sectigo's API will return an error if it is
+  #          blank.
+  def revoke id, reason
+    post("revoke/#{id}", reason: reason)
+    nil
+  end
+
   # Sign an SSL cert.  Returns the id of the SSL cert
   # +csr+ is the CSR as a String, OpenSSL::X509::Request or Varanus::SSL::CSR
   # +org_id+ or your organization id on cert-manager.com

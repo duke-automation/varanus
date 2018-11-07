@@ -212,6 +212,15 @@ class VaranusSSLTest < Minitest::Test
     end
   end
 
+  def test_revoke
+    content_body = { reason: 'Testing' }
+    stub_request(:post, 'https://cert-manager.com/api/ssl/v1/revoke/2345')
+      .with(headers: @expected_auth_headers, body: content_body.to_json)
+      .to_return(status: 204)
+
+    assert_nil @ssl.revoke 2345, 'Testing'
+  end
+
   def test_sign_cert_all_options
     # Type will be int, term will be in days
 
