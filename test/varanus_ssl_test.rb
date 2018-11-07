@@ -130,7 +130,7 @@ class VaranusSSLTest < Minitest::Test
     assert_equal 'Unknown user', exp.to_s
   end
 
-  def test_collect_cert
+  def test_collect
     return_body = <<~X509
       -----BEGIN CERTIFICATE-----
       MIIENjCCAx6gAwIBAgIBATANBgkqhkiG9w0BAQUFADBvMQswCQYDVQQGEwJTRTEU
@@ -197,10 +197,10 @@ class VaranusSSLTest < Minitest::Test
                  headers: { 'Content-Type' => 'application/octet-stream;charset=UTF-8',
                             'content-disposition' => 'attachment; filename=example_com.cer' })
 
-    assert_equal return_body, @ssl.collect_cert(2345)
+    assert_equal return_body, @ssl.collect(2345)
   end
 
-  def test_collect_cert_processing
+  def test_collect_processing
     return_body = { code: 0, description: 'Being processed by Comodo' }
     stub_request(:get, 'https://cert-manager.com/api/ssl/v1/collect/2345/x509')
       .with(headers: @expected_auth_headers)
@@ -208,7 +208,7 @@ class VaranusSSLTest < Minitest::Test
                  headers: { 'Content-Type' => 'application/json;charset=UTF-8' })
 
     assert_raises(Varanus::Error::StillProcessing) do
-      @ssl.collect_cert 2345
+      @ssl.collect 2345
     end
   end
 
@@ -221,7 +221,7 @@ class VaranusSSLTest < Minitest::Test
     assert_nil @ssl.revoke 2345, 'Testing'
   end
 
-  def test_sign_cert_all_options
+  def test_sign_all_options
     # Type will be int, term will be in days
 
     csr = <<~CSR
@@ -254,12 +254,12 @@ class VaranusSSLTest < Minitest::Test
       .to_return(status: 200, headers: { 'Content-Type' => 'application/json' },
                  body: return_body.to_json)
 
-    assert_equal 382, @ssl.sign_cert(csr, 557, comments: 'This is a comment',
-                                               cert_type: 27, days: 90,
-                                               external_requester: 'root@example.com')
+    assert_equal 382, @ssl.sign(csr, 557, comments: 'This is a comment',
+                                          cert_type: 27, days: 90,
+                                          external_requester: 'root@example.com')
   end
 
-  def test_sign_cert_csrobj_defaults_cn_only
+  def test_sign_csrobj_defaults_cn_only
     csr_str = <<~CSR
       -----BEGIN CERTIFICATE REQUEST-----
       MIIBVTCBvwIBADAWMRQwEgYDVQQDDAtleGFtcGxlLmNvbTCBnzANBgkqhkiG9w0B
@@ -295,10 +295,10 @@ class VaranusSSLTest < Minitest::Test
       .to_return(status: 200, headers: { 'Content-Type' => 'application/json' },
                  body: return_body.to_json)
 
-    assert_equal 382, @ssl.sign_cert(csr, 557)
+    assert_equal 382, @ssl.sign(csr, 557)
   end
 
-  def test_sign_cert_opensslobj_defaults_cn_and_san
+  def test_sign_opensslobj_defaults_cn_and_san
     csr_str = <<~CSR
       -----BEGIN CERTIFICATE REQUEST-----
       MIIBkzCB/QIBADAWMRQwEgYDVQQDDAtleGFtcGxlLmNvbTCBnzANBgkqhkiG9w0B
@@ -335,10 +335,10 @@ class VaranusSSLTest < Minitest::Test
       .to_return(status: 200, headers: { 'Content-Type' => 'application/json' },
                  body: return_body.to_json)
 
-    assert_equal 382, @ssl.sign_cert(csr, 557)
+    assert_equal 382, @ssl.sign(csr, 557)
   end
 
-  def test_sign_cert_text_defaults_san_only
+  def test_sign_text_defaults_san_only
     csr = <<~CSR
       -----BEGIN CERTIFICATE REQUEST-----
       MIIBaDCB0gIBADAAMIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDkFoOvytfA
@@ -373,10 +373,10 @@ class VaranusSSLTest < Minitest::Test
       .to_return(status: 200, headers: { 'Content-Type' => 'application/json' },
                  body: return_body.to_json)
 
-    assert_equal 382, @ssl.sign_cert(csr, 557)
+    assert_equal 382, @ssl.sign(csr, 557)
   end
 
-  def test_sign_cert_years_type_string
+  def test_sign_years_type_string
     # specify term as years
     # specify type as string
 
@@ -415,9 +415,9 @@ class VaranusSSLTest < Minitest::Test
       .to_return(status: 200, headers: { 'Content-Type' => 'application/json' },
                  body: return_body.to_json)
 
-    assert_equal 382, @ssl.sign_cert(csr, 557, comments: 'This is a comment',
-                                               cert_type: 'test SSL (SHA-2)', years: 2,
-                                               external_requester: 'root@example.com')
+    assert_equal 382, @ssl.sign(csr, 557, comments: 'This is a comment',
+                                          cert_type: 'test SSL (SHA-2)', years: 2,
+                                          external_requester: 'root@example.com')
   end
 
   private

@@ -29,7 +29,7 @@ class Varanus::SSL
   end
 
   # Returns the cert contents.
-  # +id+ is the id returned by #sign_cert
+  # +id+ is the id returned by #sign
   # +type+ can be one of:
   #  'x509'    - X509 format - cert and chain (default)
   #  'x509CO'  - X509 format - cert only
@@ -39,7 +39,7 @@ class Varanus::SSL
   #  'bin'     - PKCS#7 bin encoded
   #
   # If the cert is still being signed, Varanus::Error::StillProcessing will be raised
-  def collect_cert id, type = 'x509'
+  def collect id, type = 'x509'
     get("collect/#{id}/#{type}")
   end
 
@@ -65,7 +65,7 @@ class Varanus::SSL
   #           and used as days)
   #  :days - number of days cert should be valid for (if none is specified, lowest allowed
   #          for the cert type will be used)
-  def sign_cert csr, org_id, opts = {}
+  def sign csr, org_id, opts = {}
     csr = Varanus::SSL::CSR.new(csr) unless csr.is_a?(Varanus::SSL::CSR)
     cert_type_id = opts_to_cert_type_id opts, csr
     args = {
