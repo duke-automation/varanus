@@ -25,7 +25,36 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+#### Sign SSL cert from CSR
+
+```ruby
+csr = File.read('/path/to/file.csr')
+varanus = Varanus.new(customer_uri, username, password)
+id = varanus.ssl.sign csr, org_id
+begin
+  cert = varanus.ssl.collect id
+rescue Varanus::Error::StillProcessing
+  sleep 1
+  retry
+end
+puts cert
+```
+
+#### Revoke SSL cert
+
+```ruby
+Varanus.new(customer_uri, username, password).ssl.revoke(id)
+```
+
+#### Authentication
+
+Authentication requires the same credentials you use to login to cert-manager.com as well as the ```customer_uri```.  If your URL to log into cert-manager.com is https://cert-manager.com/customer/MyCompany then your ```customer_uri``` will be ```'MyCompany'```
+
+#### Finding Organization Id (org_id)
+
+Signing a cert requires specifying an ```org_id```.  Each department in cert-manager.com has an associated ```org_id```.
+
+To find the ```org_id```, log into cert-manager.com, go to **Settings** -> **Departments**, then click to edit the department you are interested in.  The value you want is in the **OrgID** field.
 
 ## Development
 
