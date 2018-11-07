@@ -207,10 +207,9 @@ class VaranusSSLTest < Minitest::Test
       .to_return(status: 400, body: return_body.to_json,
                  headers: { 'Content-Type' => 'application/json;charset=UTF-8' })
 
-    assert_raises(Varanus::Error) do
+    assert_raises(Varanus::Error::StillProcessing) do
       @ssl.collect_cert 2345
     end
-    skip 'do better error type'
   end
 
   def test_sign_cert_all_options

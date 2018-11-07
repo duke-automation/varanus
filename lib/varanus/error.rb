@@ -8,3 +8,5 @@ class Varanus::Error < StandardError
     super(msg)
   end
 end
+
+class Varanus::Error::StillProcessing < Varanus::Error; end

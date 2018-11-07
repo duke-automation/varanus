@@ -28,6 +28,21 @@ class Varanus::SSL
     @certificate_types ||= get('types')
   end
 
+  # Returns the cert contents.
+  # +id+ is the id returned by #sign_cert
+  # +type+ can be one of:
+  #  'x509'    - X509 format - cert and chain (default)
+  #  'x509CO'  - X509 format - cert only
+  #  'x509IO'  - X509 format - intermediates/root only
+  #  'x590IOR' - X509 format - intermediates/root only reversed
+  #  'base64'  - PKCS#7 base64 encoded
+  #  'bin'     - PKCS#7 bin encoded
+  #
+  # If the cert is still being signed, Varanus::Error::StillProcessing will be raised
+  def collect_cert id, type = 'x509'
+    get("collect/#{id}/#{type}")
+  end
+
   # Sign an SSL cert.  Returns the id of the SSL cert
   # +csr+ is the CSR as a String, OpenSSL::X509::Request or Varanus::SSL::CSR
   # +org_id+ or your organization id on cert-manager.com
@@ -64,7 +79,12 @@ class Varanus::SSL
     return unless body.is_a?(Hash)
     return if body['code'].nil?
 
-    raise Varanus::Error.new(body['code'], body['description'])
+    klass = Varanus::Error
+    if body['code'] == 0 && body['description'] =~ /process/
+      klass = Varanus::Error::StillProcessing
+    end
+
+    raise klass.new(body['code'], body['description'])
   end
 
   def connection
