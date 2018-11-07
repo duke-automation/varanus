@@ -241,7 +241,7 @@ class VaranusSSLTest < Minitest::Test
     expected_body = {
       orgId: 557,
       csr: csr,
-      subjAltNames: ['www.example.com', 'ftp.example.com'],
+      subjAltNames: 'www.example.com,ftp.example.com',
       certType: 27,
       term: 90,
       serverType: -1,
@@ -282,7 +282,7 @@ class VaranusSSLTest < Minitest::Test
     expected_body = {
       orgId: 557,
       csr: csr,
-      subjAltNames: [],
+      subjAltNames: '',
       certType: 25,
       term: 90,
       serverType: -1,
@@ -322,7 +322,7 @@ class VaranusSSLTest < Minitest::Test
     expected_body = {
       orgId: 557,
       csr: csr,
-      subjAltNames: ['www.example.com', 'ftp.example.com'],
+      subjAltNames: 'www.example.com,ftp.example.com',
       certType: 27,
       term: 365,
       serverType: -1,
@@ -360,7 +360,7 @@ class VaranusSSLTest < Minitest::Test
     expected_body = {
       orgId: 557,
       csr: csr,
-      subjAltNames: ['example.com'],
+      subjAltNames: 'example.com',
       certType: 27,
       term: 365,
       serverType: -1,
@@ -402,7 +402,7 @@ class VaranusSSLTest < Minitest::Test
     expected_body = {
       orgId: 557,
       csr: csr,
-      subjAltNames: ['www.example.com', 'ftp.example.com'],
+      subjAltNames: 'www.example.com,ftp.example.com',
       certType: 25,
       term: 730,
       serverType: -1,

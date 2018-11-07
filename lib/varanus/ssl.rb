@@ -71,7 +71,7 @@ class Varanus::SSL
     args = {
       orgId: org_id,
       csr: csr.to_s,
-      subjAltNames: csr.subject_alt_names,
+      subjAltNames: csr.subject_alt_names.join(','),
       certType: cert_type_id,
       term: opts_to_term(opts, cert_type_id),
       serverType: -1,
