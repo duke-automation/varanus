@@ -10,15 +10,15 @@ class Varanus::SSL
   def certificate_type_from_csr csr
     # first exclude certificate types we don't want
     types = certificate_types.reject do |ct|
-      ct['name'].match?(/\b(?:EV|ECC|AMT|Elite)\b/)
+      ct['name'] =~ /\b(?:EV|ECC|AMT|Elite)\b/
     end
     if csr.all_names.any? { |n| n.start_with?('*.') }
-      types.find { |ct| ct['name'].match?(/Wildcard.+SSL/i) }
+      types.find { |ct| ct['name'] =~ /Wildcard.+SSL/i }
     elsif csr.subject_alt_names.any?
-      types.find { |ct| ct['name'].match?(/Multi.?Domain.+SSL/i) }
+      types.find { |ct| ct['name'] =~ /Multi.?Domain.+SSL/i }
     else
       types.find do |ct|
-        ct['name'].match?(/\bSSL\b/) && !ct['name'].match?(/(?:Multi.?Domain|Wildcard)/i)
+        ct['name'] =~ /\bSSL\b/ && ct['name'] !~ /(?:Multi.?Domain|Wildcard)/i
       end
     end
   end
