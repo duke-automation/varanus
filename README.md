@@ -7,6 +7,11 @@ Support for Sectigo's other APIs (S/MIME, code signing, device certificates, etc
 be added at a later date.  Merge requests to add some of this functionality would be
 greatly appreciated.
 
+[![Build Status](https://travis-ci.org/duke-automation/varanus.svg?branch=master)](https://travis-ci.org/duke-automation/varanus)
+[![Gem Version](https://badge.fury.io/rb/varanus.svg)](http://badge.fury.io/rb/varanus)
+[![Maintainability](https://api.codeclimate.com/v1/badges/593ef1aa2ba757b5374f/maintainability)](https://codeclimate.com/github/duke-automation/varanus/maintainability)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/593ef1aa2ba757b5374f/test_coverage)](https://codeclimate.com/github/duke-automation/varanus/test_coverage)
+
 ## Installation
 
 Add this line to your application's Gemfile:
