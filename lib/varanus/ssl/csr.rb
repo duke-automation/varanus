@@ -1,9 +1,11 @@
 # Wrapper class around a OpenSSL::X509::Request
 # Provides helper functions to make reading information from the CSR easier
 class Varanus::SSL::CSR
+  # Common Name (CN) for cert.
+  # @return [String]
   attr_reader :cn
 
-  # +csr+ can be the CSR as a string or a OpenSSL::X509::Request object
+  # @param csr [String, OpenSSL::X509::Request]
   def initialize csr
     if csr.is_a? OpenSSL::X509::Request
       @req = csr
@@ -24,7 +26,14 @@ class Varanus::SSL::CSR
     raise 'CSR must have a CN and/or subjectAltName' if @cn.nil? && @sans.empty?
   end
 
-  # Return key size as an Integer
+  # Unique list of all DNS names for cert (CN and subject alt names)
+  # @return [Array<String>]
+  def all_names
+    ([@cn] + @sans).compact.uniq
+  end
+
+  # Key size for the cert
+  # @return [Integer]
   def key_size
     case @req.public_key
     when OpenSSL::PKey::RSA
@@ -36,19 +45,15 @@ class Varanus::SSL::CSR
     end
   end
 
-  # Return text representation of CSR
+  # PEM format for cert
   def to_s
     @text
   end
 
-  # Return array of DNS subject alt names
+  # DNS subject alt names
+  # @return [Array<String>]
   def subject_alt_names
     @sans
-  end
-
-  # Returns unique array of all names (CN and subject alt names)
-  def all_names
-    ([@cn] + @sans).compact.uniq
   end
 
   private

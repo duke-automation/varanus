@@ -1,6 +1,6 @@
-# Error returned from API
+# Error returned from the Sectigo API
 class Varanus::Error < StandardError
-  # Numeric code associated with error
+  # @return [Integer] Code associated with error
   attr_reader :code
 
   def initialize code, msg
@@ -9,4 +9,5 @@ class Varanus::Error < StandardError
   end
 end
 
+# Certificate is still being signed.
 class Varanus::Error::StillProcessing < Varanus::Error; end

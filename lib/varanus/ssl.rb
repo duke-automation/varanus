@@ -1,12 +1,14 @@
 # An connection to the SSL/TSL API.  This should not be initialized directly.  Instead,
 # use Varanus#ssl
 class Varanus::SSL
-  def initialize varanus # :nodoc:
+  # @note Do not call this directly.  Use {Varanus#ssl} to initialize
+  def initialize varanus
     @varanus = varanus
   end
 
   # Returns the option from #certificate_types that best matches the csr.
-  # +csr+ must be a Varanus::SSL::CSR object
+  # @param csr [Varanus::SSL::CSR]
+  # @return [Hash] The option from {#certificate_types} that best matches the csr
   def certificate_type_from_csr csr
     # first exclude certificate types we don't want
     types = certificate_types.reject do |ct|
@@ -23,13 +25,16 @@ class Varanus::SSL
     end
   end
 
-  # Return Array of certificate types that can be used
+  # Certificate types that can be used to sign a cert
+  # @return [Array<Hash>]
   def certificate_types
     @certificate_types ||= get('types')
   end
 
-  # Returns the cert contents.
-  # +id+ is the id returned by #sign
+  # Retrieves the cert.
+  # @param id [Integer] As returned by {#sign}
+  # @param type [String]
+  #
   # +type+ can be one of:
   #  'x509'    - X509 format - cert and chain (default)
   #  'x509CO'  - X509 format - cert only
@@ -38,33 +43,35 @@ class Varanus::SSL
   #  'base64'  - PKCS#7 base64 encoded
   #  'bin'     - PKCS#7 bin encoded
   #
-  # If the cert is still being signed, Varanus::Error::StillProcessing will be raised
+  # @raise [Varanus::Error::StillProcessing] Cert is still being signed
+  # @return [String] Certificate
   def collect id, type = 'x509'
     get("collect/#{id}/#{type}")
   end
 
   # Revoke an ssl cert
-  # +id+ is the ID returned by #sign
-  # +reason+ should be a non-blank String.  Sectigo's API will return an error if it is
-  #          blank.
+  # @param id [Integer] As returned by {#sign}
+  # @param reason [String] Reason for revoking. Sectigo's API will return an error if it
+  #   is blank.
   def revoke id, reason
     post("revoke/#{id}", reason: reason)
     nil
   end
 
   # Sign an SSL cert.  Returns the id of the SSL cert
-  # +csr+ is the CSR as a String, OpenSSL::X509::Request or Varanus::SSL::CSR
-  # +org_id+ or your organization id on cert-manager.com
-  # +opts+ can include any of the following keys:
-  #  :comments - no more than 1,024 characers
-  #  :external_requester - email address associated with cert on cert-manager.com - no
-  #                        more than 512 characters
-  #  :cert_type - can be name(String) or id(Integer) of the cert type to use.  If none is
-  #               specified, Varanus will attempt to find one
-  #  :years - number of years cert should be valid for (this number is multiplied by 365
-  #           and used as days)
-  #  :days - number of days cert should be valid for (if none is specified, lowest allowed
-  #          for the cert type will be used)
+  # @param csr [Varanus::SSL::CSR, OpenSSL::X509::Request, String] CSR to sign
+  # @param org_id [Integer] your organization id on cert-manager.com
+  # @param opts [Hash]
+  # @option opts [String] :comments ('') Limited to 1,024 characters
+  # @option opts [String] :external_requester ('') email address associated with cert on
+  #   cert-manager.com - limited to 512 characters
+  # @option opts [String, Integer] :cert_type name(String) or id(Integer) of the cert
+  #   type to use.  If none is specified, Varanus will attempt to find one
+  # @option opts [Integer] :years number of years cert should be valid for (this number
+  #   is multiplied by 365  and used as days)
+  # @option opts [Integer] :days  number of days cert should be valid for (if none is
+  #   specified, lowest allowed for the cert type will be used)
+  # @return [Integer] Id of SSL cert.
   def sign csr, org_id, opts = {}
     csr = Varanus::SSL::CSR.new(csr) unless csr.is_a?(Varanus::SSL::CSR)
     cert_type_id = opts_to_cert_type_id opts, csr
