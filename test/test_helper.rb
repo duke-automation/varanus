@@ -11,6 +11,7 @@ require 'varanus'
 require 'minitest/autorun'
 require 'minitest/rg'
 require 'webmock/minitest'
+require 'mocha/minitest'
 
 class Minitest::Test
   def setup

@@ -21,9 +21,12 @@ GEM
     hashdiff (0.3.7)
     jaro_winkler (1.5.1)
     json (2.1.0)
+    metaclass (0.0.4)
     minitest (5.11.3)
     minitest-rg (5.2.0)
       minitest (~> 5.0)
+    mocha (1.7.0)
+      metaclass (~> 0.0.1)
     multipart-post (2.0.0)
     parallel (1.12.1)
     parser (2.5.3.0)
@@ -60,6 +63,7 @@ DEPENDENCIES
   bundler (~> 1.16)
   minitest (~> 5.0)
   minitest-rg
+  mocha
   rake (~> 10.0)
   rubocop
   simplecov
