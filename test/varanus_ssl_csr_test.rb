@@ -3,6 +3,49 @@
 require 'test_helper'
 
 class VaranusSSLCSRTest < Minitest::Test
+  def test_generate_basic
+    key, csr = Varanus::SSL::CSR.generate(['example.com', 'www.example.com'])
+
+    assert_equal 'example.com', csr.cn
+    assert_equal ['example.com', 'www.example.com'], csr.subject_alt_names
+
+    assert_equal Varanus::SSL::CSR::DEFAULT_KEY_SIZE, csr.key_size
+    assert_equal csr.request.to_s, csr.to_s
+    assert csr.request.verify(csr.request.public_key)
+
+    assert_instance_of OpenSSL::PKey::DSA, key
+  end
+
+  def test_generate_with_existing_key
+    orig_key = OpenSSL::PKey::RSA.new(1024)
+    key, csr = Varanus::SSL::CSR.generate(['example.com', 'www.example.com'], orig_key)
+
+    assert_equal 'example.com', csr.cn
+    assert_equal ['example.com', 'www.example.com'], csr.subject_alt_names
+
+    assert_equal 1024, csr.key_size
+    assert_equal csr.request.to_s, csr.to_s
+    assert csr.request.verify(csr.request.public_key)
+
+    assert_equal orig_key, key
+  end
+
+  def test_generate_with_subject_data
+    key, csr = Varanus::SSL::CSR.generate(['example.com', 'www.example.com'], nil,
+                                          'O' => 'Test Company', 'C' => 'US')
+
+    assert_equal 'example.com', csr.cn
+    assert_equal ['example.com', 'www.example.com'], csr.subject_alt_names
+
+    assert_equal Varanus::SSL::CSR::DEFAULT_KEY_SIZE, csr.key_size
+    assert_equal csr.request.to_s, csr.to_s
+    assert csr.request.verify(csr.request.public_key)
+
+    assert_instance_of OpenSSL::PKey::DSA, key
+
+    assert_equal '/O=Test Company/C=US/CN=example.com', csr.request.subject.to_s
+  end
+
   def test_load_csr_cn_and_san
     csr_str = <<~CSR
       -----BEGIN CERTIFICATE REQUEST-----

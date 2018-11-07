@@ -14,6 +14,22 @@ greatly appreciated.
 
 ## Usage
 
+#### Generate and sign SSL cert
+
+```ruby
+key, csr = Varanus::SSL::CSR.generate(['example.com'])
+varanus = Varanus.new(customer_uri, username, password)
+id = varanus.ssl.sign csr, org_id
+begin
+  cert = varanus.ssl.collect id
+rescue Varanus::Error::StillProcessing
+  sleep 1
+  retry
+end
+puts key
+puts cert
+```
+
 #### Sign SSL cert from CSR
 
 ```ruby

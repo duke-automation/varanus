@@ -3,23 +3,63 @@
 # Wrapper class around a OpenSSL::X509::Request
 # Provides helper functions to make reading information from the CSR easier
 class Varanus::SSL::CSR
+  # Key size used when calling {.generate}
+  DEFAULT_KEY_SIZE = 4096
+
+  # Generate a CSR
+  # @param names [Array<String>] List of DNS names.  The first one will be the CN
+  # @param key [OpenSSL::PKey::RSA, OpenSSL::PKey::DSA, nil] Secret key for the cert.
+  #   A DSA key will be generated if +nil+ is passed in.
+  # @param subject [Hash] Options for the subject of the cert.  By default only CN will
+  #   be set
+  # @return [Array(OpenSSL::PKey::PKey, Varanus::SSL::CSR)] The private key for the cert
+  #   and CSR
+  def self.generate names, key = nil, subject = {}
+    raise ArgumentError, 'names cannot be empty' if names.empty?
+
+    subject = subject.dup
+    subject['CN'] = names.first
+
+    key ||= OpenSSL::PKey::DSA.new(DEFAULT_KEY_SIZE)
+
+    request = OpenSSL::X509::Request.new
+    request.version = 0
+    request.subject = OpenSSL::X509::Name.parse subject.map { |k, v| "/#{k}=#{v}" }.join
+
+    # Set Subject Alternate Names
+    ef = OpenSSL::X509::ExtensionFactory.new
+    name_str = names.map { |n| "DNS:#{n}" }.join(', ')
+    ext = ef.create_extension('subjectAltName', name_str, false)
+    seq = OpenSSL::ASN1::Sequence([ext])
+    ext_req = OpenSSL::ASN1::Set([seq])
+    request.add_attribute OpenSSL::X509::Attribute.new('extReq', ext_req)
+
+    request.public_key = key.public_key
+    request.sign(key, OpenSSL::Digest::SHA256.new)
+    [key, Varanus::SSL::CSR.new(request)]
+  end
+
   # Common Name (CN) for cert.
   # @return [String]
   attr_reader :cn
 
+  # OpenSSL::X509::Request representation of CSR
+  # @return [OpenSSL::X509::Request]
+  attr_reader :request
+
   # @param csr [String, OpenSSL::X509::Request]
   def initialize csr
     if csr.is_a? OpenSSL::X509::Request
-      @req = csr
+      @request = csr
       @text = csr.to_s
     else
       @text = csr.to_s
-      @req = OpenSSL::X509::Request.new @text
+      @request = OpenSSL::X509::Request.new @text
     end
 
-    raise 'Improperly signed CSR' unless @req.verify @req.public_key
+    raise 'Improperly signed CSR' unless @request.verify @request.public_key
 
-    cn_ref = @req.subject.to_a.find { |a| a[0] == 'CN' }
+    cn_ref = @request.subject.to_a.find { |a| a[0] == 'CN' }
     @cn = cn_ref && cn_ref[1].downcase
 
     _parse_sans
@@ -37,13 +77,13 @@ class Varanus::SSL::CSR
   # Key size for the cert
   # @return [Integer]
   def key_size
-    case @req.public_key
+    case @request.public_key
     when OpenSSL::PKey::RSA
-      @req.public_key.n.num_bytes * 8
+      @request.public_key.n.num_bytes * 8
     when OpenSSL::PKey::DSA
-      @req.public_key.p.num_bytes * 8
+      @request.public_key.p.num_bytes * 8
     else
-      raise "Unknown public key type: #{@req.public_key.class}"
+      raise "Unknown public key type: #{@request.public_key.class}"
     end
   end
 
@@ -61,7 +101,7 @@ class Varanus::SSL::CSR
   private
 
   def _parse_sans
-    extensions = @req.attributes.select { |at| at.oid == 'extReq' }
+    extensions = @request.attributes.select { |at| at.oid == 'extReq' }
     sans_extensions = extensions.flat_map do |extension|
       extension.value.value[0].value
                .select { |ext| ext.first.value == 'subjectAltName' }
