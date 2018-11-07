@@ -12,22 +12,6 @@ greatly appreciated.
 [![Maintainability](https://api.codeclimate.com/v1/badges/593ef1aa2ba757b5374f/maintainability)](https://codeclimate.com/github/duke-automation/varanus/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/593ef1aa2ba757b5374f/test_coverage)](https://codeclimate.com/github/duke-automation/varanus/test_coverage)
 
-## Installation
-
-Add this line to your application's Gemfile:
-
-```ruby
-gem 'varanus'
-```
-
-And then execute:
-
-    $ bundle
-
-Or install it yourself as:
-
-    $ gem install varanus
-
 ## Usage
 
 #### Sign SSL cert from CSR
@@ -60,6 +44,22 @@ Authentication requires the same credentials you use to login to cert-manager.co
 Signing a cert requires specifying an ```org_id```.  Each department in cert-manager.com has an associated ```org_id```.
 
 To find the ```org_id```, log into cert-manager.com, go to **Settings** -> **Departments**, then click to edit the department you are interested in.  The value you want is in the **OrgID** field.
+
+## Installation
+
+Add this line to your application's Gemfile:
+
+```ruby
+gem 'varanus'
+```
+
+And then execute:
+
+    $ bundle
+
+Or install it yourself as:
+
+    $ gem install varanus
 
 ## Development
 
