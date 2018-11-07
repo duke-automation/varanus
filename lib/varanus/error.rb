@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Error returned from the Sectigo API
 class Varanus::Error < StandardError
   # @return [Integer] Code associated with error

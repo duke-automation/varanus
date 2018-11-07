@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # An connection to the SSL/TSL API.  This should not be initialized directly.  Instead,
 # use Varanus#ssl
 class Varanus::SSL

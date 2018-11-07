@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Wrapper class around a OpenSSL::X509::Request
 # Provides helper functions to make reading information from the CSR easier
 class Varanus::SSL::CSR

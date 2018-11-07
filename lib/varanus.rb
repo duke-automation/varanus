@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Interface for Sectigo's (formerly Comodo CA) API.
 class Varanus
   attr_reader :customer_uri, :username, :password

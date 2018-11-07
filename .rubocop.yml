@@ -28,21 +28,10 @@ Naming/FileName:
   Exclude:
     - Gemfile
 
-Naming/UncommunicativeMethodParamName:
-  AllowedNames:
-    - gb
-    - id
-    - ip
-    - os
-    - vm
-
 Style/ClassAndModuleChildren:
-  Enabled: false
+  EnforcedStyle: compact
 
 Style/ConditionalAssignment:
-  Enabled: false
-
-Style/FrozenStringLiteralComment:
   Enabled: false
 
 Style/MethodDefParentheses:
@@ -56,15 +45,6 @@ Style/RescueModifier:
 
 Style/SymbolArray:
   EnforcedStyle: brackets
-
-Style/TrailingCommaInArguments:
-  EnforcedStyleForMultiline: no_comma
-
-Style/TrailingCommaInArrayLiteral:
-  EnforcedStyleForMultiline: no_comma
-
-Style/TrailingCommaInHashLiteral:
-  EnforcedStyleForMultiline: no_comma
 
 Style/WordArray:
   EnforcedStyle: brackets
