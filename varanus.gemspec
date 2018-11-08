@@ -42,5 +42,6 @@ Gem::Specification.new do |spec|
 
   spec.add_runtime_dependency 'faraday'
   spec.add_runtime_dependency 'faraday_middleware'
+  spec.add_runtime_dependency 'savon', '~> 2.0'
 end
 # rubocop:enable Metrics/BlockLength

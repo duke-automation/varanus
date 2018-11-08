@@ -51,6 +51,18 @@ puts cert
 Varanus.new(customer_uri, username, password).ssl.revoke(id)
 ```
 
+#### Reports
+
+Report on all SSL certs
+```ruby
+pp Varanus.new(customer_uri, usernams, password).reports.ssl
+```
+
+Report on all domains (DCV status)
+```ruby
+pp Varanus.new(customer_uri, usernams, password).reports.domains
+```
+
 #### Authentication
 
 Authentication requires the same credentials you use to login to cert-manager.com as well as the ```customer_uri```.  If your URL to log into cert-manager.com is https://cert-manager.com/customer/MyCompany then your ```customer_uri``` will be ```'MyCompany'```

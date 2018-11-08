@@ -14,6 +14,12 @@ class Varanus
     @password = password
   end
 
+  # Retrieve Reports instance
+  # @return [Varanus::Reports]
+  def reports
+    @reports ||= Reports.new(self)
+  end
+
   # Retrive SSL instance
   # @return [Varanus::SSL]
   def ssl
@@ -25,9 +31,11 @@ end
 require 'faraday'
 require 'faraday_middleware'
 require 'openssl'
+require 'savon'
 
 # Require other files in this gem
 require 'varanus/error'
+require 'varanus/reports'
 require 'varanus/ssl'
 require 'varanus/ssl/csr'
 require 'varanus/version'
