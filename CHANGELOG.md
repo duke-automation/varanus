@@ -1,3 +1,6 @@
+### 0.2.1 (2018-22-13)
+* Increase timeout value for SSL requests
+
 ### 0.2.0 (2018-11-09)
 * Added Varanus::SSL::CSR.generate
 * Added Reports

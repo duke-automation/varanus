@@ -106,7 +106,8 @@ class Varanus::SSL
   end
 
   def connection
-    @connection ||= Faraday.new(url: 'https://cert-manager.com/api/ssl/v1') do |conn|
+    @connection ||= Faraday.new(url: 'https://cert-manager.com/api/ssl/v1',
+                                request: { timeout: 300 }) do |conn|
       conn.request :json
       conn.response :json, content_type: /\bjson$/
 
