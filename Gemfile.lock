@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    varanus (0.2.0)
+    varanus (0.2.1)
       faraday
       faraday_middleware
       savon (~> 2.0)
