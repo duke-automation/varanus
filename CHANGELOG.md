@@ -1,7 +1,7 @@
-### Next version
+### 0.3.0 (2020-08-24)
 * Add support for new 'Short Life' certs
 
-### 0.2.1 (2018-22-13)
+### 0.2.1 (2018-11-13)
 * Increase timeout value for SSL requests
 
 ### 0.2.0 (2018-11-09)
