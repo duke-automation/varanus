@@ -15,14 +15,11 @@ class Varanus::SSL
     types = certificate_types_standard(days)
     return types.first if types.length <= 1
 
-    if csr.all_names.any? { |n| n.start_with?('*.') }
-      types.find { |ct| ct['name'] =~ /Wildcard.+SSL/i }
-    elsif csr.subject_alt_names.any?
-      types.find { |ct| ct['name'] =~ /Multi.?Domain.+SSL/i }
-    else
-      types.find do |ct|
-        ct['name'] =~ /\bSSL\b/ && ct['name'] !~ /(?:Multi.?Domain|Wildcard)/i
-      end
+    regexp = cert_type_regexp(csr)
+    return types.find { |ct| ct['name'] =~ regexp } if regexp
+
+    types.find do |ct|
+      ct['name'] =~ /\bSSL\b/ && ct['name'] !~ /(?:Multi.?Domain|Wildcard)/i
     end
   end
 
@@ -103,6 +100,14 @@ class Varanus::SSL
   end
 
   private
+
+  def cert_type_regexp csr
+    return /Wildcard.+SSL/i if csr.all_names.any? { |n| n.start_with?('*.') }
+
+    return /Multi.?Domain.+SSL/i if csr.subject_alt_names.any?
+
+    nil
+  end
 
   def check_result result
     body = result.body

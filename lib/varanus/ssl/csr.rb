@@ -25,18 +25,23 @@ class Varanus::SSL::CSR
     request = OpenSSL::X509::Request.new
     request.version = 0
     request.subject = OpenSSL::X509::Name.parse subject.map { |k, v| "/#{k}=#{v}" }.join
+    request.add_attribute names_to_san_attribute(names)
+    request.public_key = key.public_key
 
-    # Set Subject Alternate Names
+    request.sign(key, OpenSSL::Digest::SHA256.new)
+
+    [key, Varanus::SSL::CSR.new(request)]
+  end
+
+  # :nodoc:
+  # Create a Subject Alternate Names attribute from an Array of dns names
+  def self.names_to_san_attribute names
     ef = OpenSSL::X509::ExtensionFactory.new
     name_str = names.map { |n| "DNS:#{n}" }.join(', ')
     ext = ef.create_extension('subjectAltName', name_str, false)
     seq = OpenSSL::ASN1::Sequence([ext])
     ext_req = OpenSSL::ASN1::Set([seq])
-    request.add_attribute OpenSSL::X509::Attribute.new('extReq', ext_req)
-
-    request.public_key = key.public_key
-    request.sign(key, OpenSSL::Digest::SHA256.new)
-    [key, Varanus::SSL::CSR.new(request)]
+    OpenSSL::X509::Attribute.new('extReq', ext_req)
   end
 
   # Common Name (CN) for cert.

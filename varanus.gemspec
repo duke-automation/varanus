@@ -4,7 +4,6 @@ lib = File.expand_path('lib', __dir__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'varanus/version'
 
-# rubocop:disable Metrics/BlockLength
 Gem::Specification.new do |spec|
   spec.name          = 'varanus'
   spec.version       = Varanus::VERSION
@@ -44,4 +43,3 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency 'faraday_middleware'
   spec.add_runtime_dependency 'savon', '~> 2.0'
 end
-# rubocop:enable Metrics/BlockLength

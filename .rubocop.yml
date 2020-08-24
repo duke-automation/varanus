@@ -1,8 +1,14 @@
 AllCops:
+  NewCops: disable
   TargetRubyVersion: 2.5
 
 Bundler/OrderedGems:
   AutoCorrect: false
+
+Layout/LineLength:
+  Max: 90
+  Exclude:
+    - 'test/**/*'
 
 Metrics/AbcSize:
   Max: 25
@@ -11,11 +17,6 @@ Metrics/AbcSize:
 
 Metrics/ClassLength:
   Max: 125
-  Exclude:
-    - 'test/**/*'
-
-Metrics/LineLength:
-  Max: 90
   Exclude:
     - 'test/**/*'
 
