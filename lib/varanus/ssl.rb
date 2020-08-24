@@ -11,11 +11,10 @@ class Varanus::SSL
   # Returns the option from #certificate_types that best matches the csr.
   # @param csr [Varanus::SSL::CSR]
   # @return [Hash] The option from {#certificate_types} that best matches the csr
-  def certificate_type_from_csr csr
-    # first exclude certificate types we don't want
-    types = certificate_types.reject do |ct|
-      ct['name'] =~ /\b(?:EV|ECC|AMT|Elite)\b/
-    end
+  def certificate_type_from_csr csr, days = nil
+    types = certificate_types_standard(days)
+    return types.first if types.length <= 1
+
     if csr.all_names.any? { |n| n.start_with?('*.') }
       types.find { |ct| ct['name'] =~ /Wildcard.+SSL/i }
     elsif csr.subject_alt_names.any?
@@ -31,6 +30,18 @@ class Varanus::SSL
   # @return [Array<Hash>]
   def certificate_types
     @certificate_types ||= get('types')
+  end
+
+  # Return Array of certificate types based on standard sorting.
+  # @param days [Integer] if present, only include types that support the given day count
+  # @return [Array<Hash>]
+  def certificate_types_standard days = nil
+    types = certificate_types.reject do |ct|
+      ct['name'] =~ /\b(?:EV|ECC|AMT|Elite)\b/
+    end
+    types = types.select! { |t| t['terms'].include? days } unless days.nil?
+
+    types
   end
 
   # Retrieves the cert.
@@ -75,6 +86,7 @@ class Varanus::SSL
   #   specified, lowest allowed for the cert type will be used)
   # @return [Integer] Id of SSL cert.
   def sign csr, org_id, opts = {}
+    opts[:days] ||= opts[:years] * 365 unless opts[:years].nil?
     csr = Varanus::SSL::CSR.new(csr) unless csr.is_a?(Varanus::SSL::CSR)
     cert_type_id = opts_to_cert_type_id opts, csr
     args = {
@@ -132,7 +144,7 @@ class Varanus::SSL
     when String
       certificate_types.find { |ct| ct['name'] == opts[:cert_type] }['id']
     else
-      certificate_type_from_csr(csr)['id']
+      certificate_type_from_csr(csr, opts[:days])['id']
     end
   end
 
@@ -144,7 +156,6 @@ class Varanus::SSL
 
   def opts_to_term opts, cert_type_id
     term = opts[:days]
-    term ||= opts[:years] * 365 unless opts[:years].nil?
     term ||= certificate_types.find { |ct| ct['id'] == cert_type_id }['terms'].min
     term
   end

@@ -1,3 +1,6 @@
+### Next version
+* Add support for new 'Short Life' certs
+
 ### 0.2.1 (2018-22-13)
 * Increase timeout value for SSL requests
 
