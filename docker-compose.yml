@@ -1,7 +1,7 @@
 version: '3'
 services:
   console:
-    image: ruby:2.3
+    image: ruby:2.5
     volumes:
       - .:/app:z
     hostname: varanus-dev
