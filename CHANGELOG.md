@@ -1,3 +1,6 @@
+### 0.3.1 (2020-10-14)
+* Fix issue when Sectigo reports two identical 'Short Life' certs
+
 ### 0.3.0 (2020-08-24)
 * Add support for new 'Short Life' certs
 

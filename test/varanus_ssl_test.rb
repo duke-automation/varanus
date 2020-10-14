@@ -381,6 +381,50 @@ class VaranusSSLTest < Minitest::Test
                                           external_requester: 'root@example.com')
   end
 
+  def test_sign_short_term_two_options
+    # Sectigo is not reporting two identical short term cert options.
+    # This test will ensure one of them is selected
+    @ssl.expects(:certificate_types).returns(
+      [{ 'id' => 25, 'name' => 'test SSL (SHA-2)', 'terms' => [365, 730] },
+       { 'id' => 444, 'name' => 'test SSL (Short Life)', 'terms' => [30, 60, 90] },
+       { 'id' => 445, 'name' => 'test SSL (Short Life)', 'terms' => [30, 60, 90] },
+       { 'id' => 27, 'name' => 'test Multi Domain SSL (SHA-2)', 'terms' => [365, 730] }]
+    )
+
+    csr = <<~CSR
+      -----BEGIN CERTIFICATE REQUEST-----
+      MIIBkzCB/QIBADAWMRQwEgYDVQQDDAtleGFtcGxlLmNvbTCBnzANBgkqhkiG9w0B
+      AQEFAAOBjQAwgYkCgYEA0SoP9mkRDebGOM6RRthcRYocS3QhlyfyOkH/P7MYJ7TP
+      jUN1T6CX3UXljHI3/y0FZQbihnbxidi1VtjMrCFg//pJeZJh77jfl+cr8FFIslyJ
+      e8zpAsIE2yf1flOdabNNKm8DU1lCmIp6RSxwacuee8eofinJHlfAsn/xsIaJZBsC
+      AwEAAaA+MDwGCSqGSIb3DQEJDjEvMC0wKwYDVR0RBCQwIoIPd3d3LmV4YW1wbGUu
+      Y29tgg9mdHAuZXhhbXBsZS5jb20wDQYJKoZIhvcNAQELBQADgYEAqlQP1YYkMQkq
+      ehm+rfjdOMJwrEJAwJ0/O/RbFcwnb2x8YO9r/5Zuz1s3MIAekunDsdYLGTKuhKD0
+      AO/dksVF3YCmZz8hshXvDhGoBP09NIQe/0/Xo5bRMtTE+6YU2fZ8EwBt0duFCh+O
+      PUMpJq4wcK8tFbOgTsb0HjMXYmJIp6w=
+      -----END CERTIFICATE REQUEST-----
+    CSR
+
+    expected_body = {
+      orgId: 557,
+      csr: csr,
+      subjAltNames: 'www.example.com,ftp.example.com',
+      certType: 444,
+      term: 90,
+      serverType: -1,
+      comments: 'This is a comment',
+      externalRequester: 'root@example.com'
+    }
+    return_body = { renewId: 'something', sslId: 382 }
+    stub_request(:post, 'https://cert-manager.com/api/ssl/v1/enroll')
+      .with(headers: @expected_auth_headers, body: expected_body.to_json)
+      .to_return(status: 200, headers: { 'Content-Type' => 'application/json' },
+                 body: return_body.to_json)
+
+    assert_equal 382, @ssl.sign(csr, 557, comments: 'This is a comment', days: 90,
+                                          external_requester: 'root@example.com')
+  end
+
   def test_sign_text_defaults_san_only
     csr = <<~CSR
       -----BEGIN CERTIFICATE REQUEST-----

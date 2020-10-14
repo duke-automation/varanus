@@ -16,7 +16,8 @@ class Varanus::SSL
     return types.first if types.length <= 1
 
     regexp = cert_type_regexp(csr)
-    return types.find { |ct| ct['name'] =~ regexp } if regexp
+    typ = types.find { |ct| ct['name'] =~ regexp } if regexp
+    return typ unless typ.nil?
 
     types.find do |ct|
       ct['name'] =~ /\bSSL\b/ && ct['name'] !~ /(?:Multi.?Domain|Wildcard)/i
