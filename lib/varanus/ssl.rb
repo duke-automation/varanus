@@ -2,12 +2,7 @@
 
 # An connection to the SSL/TSL API.  This should not be initialized directly.  Instead,
 # use Varanus#ssl
-class Varanus::SSL
-  # @note Do not call this directly.  Use {Varanus#ssl} to initialize
-  def initialize varanus
-    @varanus = varanus
-  end
-
+class Varanus::SSL < Varanus::RestResource
   # Returns the option from #certificate_types that best matches the csr.
   # @param csr [Varanus::SSL::CSR]
   # @return [Hash] The option from {#certificate_types} that best matches the csr
@@ -110,25 +105,6 @@ class Varanus::SSL
     nil
   end
 
-  def check_result result
-    body = result.body
-    return unless body.is_a?(Hash)
-    return if body['code'].nil?
-
-    klass = Varanus::Error
-    if body['code'] == 0 && body['description'] =~ /process/
-      klass = Varanus::Error::StillProcessing
-    end
-
-    raise klass.new(body['code'], body['description'])
-  end
-
-  def get path
-    result = @varanus.connection.get(path)
-    check_result result
-    result.body
-  end
-
   def opts_to_cert_type_id opts, csr
     case opts[:cert_type]
     when Integer
@@ -138,12 +114,6 @@ class Varanus::SSL
     else
       certificate_type_from_csr(csr, opts[:days])['id']
     end
-  end
-
-  def post path, *args
-    result = @varanus.connection.post(path, *args)
-    check_result result
-    result.body
   end
 
   def opts_to_term opts, cert_type_id

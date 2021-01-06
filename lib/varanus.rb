@@ -49,6 +49,8 @@ require 'savon'
 
 # Require other files in this gem
 require 'varanus/error'
+require 'varanus/rest_resource'
+require 'varanus/dcv'
 require 'varanus/reports'
 require 'varanus/ssl'
 require 'varanus/ssl/csr'
