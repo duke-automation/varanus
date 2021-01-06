@@ -14,6 +14,20 @@ class Varanus
     @password = password
   end
 
+  def connection
+    @connection ||= Faraday.new(url: 'https://cert-manager.com/api',
+                                request: { timeout: 300 }) do |conn|
+      conn.request :json
+      conn.response :json, content_type: /\bjson$/
+
+      conn.headers['login'] = @username
+      conn.headers['password'] = @password
+      conn.headers['customerUri'] = @customer_uri
+
+      conn.adapter Faraday.default_adapter
+    end
+  end
+
   # Retrieve Reports instance
   # @return [Varanus::Reports]
   def reports

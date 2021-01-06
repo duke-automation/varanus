@@ -27,7 +27,7 @@ class Varanus::SSL
   # Certificate types that can be used to sign a cert
   # @return [Array<Hash>]
   def certificate_types
-    @certificate_types ||= get('types')
+    @certificate_types ||= get('ssl/v1/types')
   end
 
   # Return Array of certificate types based on standard sorting.
@@ -57,7 +57,7 @@ class Varanus::SSL
   # @raise [Varanus::Error::StillProcessing] Cert is still being signed
   # @return [String] Certificate
   def collect id, type = 'x509'
-    get("collect/#{id}/#{type}")
+    get("ssl/v1/collect/#{id}/#{type}")
   end
 
   # Revoke an ssl cert
@@ -65,7 +65,7 @@ class Varanus::SSL
   # @param reason [String] Reason for revoking. Sectigo's API will return an error if it
   #   is blank.
   def revoke id, reason
-    post("revoke/#{id}", reason: reason)
+    post("ssl/v1/revoke/#{id}", reason: reason)
     nil
   end
 
@@ -97,7 +97,7 @@ class Varanus::SSL
       comments: opts[:comments].to_s[0, 1024],
       externalRequester: opts[:external_requester].to_s[0, 512]
     }
-    post('enroll', args)['sslId']
+    post('ssl/v1/enroll', args)['sslId']
   end
 
   private
@@ -123,22 +123,8 @@ class Varanus::SSL
     raise klass.new(body['code'], body['description'])
   end
 
-  def connection
-    @connection ||= Faraday.new(url: 'https://cert-manager.com/api/ssl/v1',
-                                request: { timeout: 300 }) do |conn|
-      conn.request :json
-      conn.response :json, content_type: /\bjson$/
-
-      conn.headers['login'] = @varanus.username
-      conn.headers['password'] = @varanus.password
-      conn.headers['customerUri'] = @varanus.customer_uri
-
-      conn.adapter Faraday.default_adapter
-    end
-  end
-
   def get path
-    result = connection.get(path)
+    result = @varanus.connection.get(path)
     check_result result
     result.body
   end
@@ -155,7 +141,7 @@ class Varanus::SSL
   end
 
   def post path, *args
-    result = connection.post(path, *args)
+    result = @varanus.connection.post(path, *args)
     check_result result
     result.body
   end
