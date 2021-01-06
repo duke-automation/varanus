@@ -24,10 +24,28 @@ class Varanus::RestResource
     raise klass.new(body['code'], body['description'])
   end
 
-  def get path
-    result = @varanus.connection.get(path)
+  def get path, *args
+    result = @varanus.connection.get(path, *args)
     check_result result
     result.body
+  end
+
+  # Performs multiple GETs with varying positions to ensure all results are returned.
+  def get_with_size_and_position path, opts = {}
+    size = opts[:size] || 200
+    position = opts[:position] || 0
+
+    results = []
+    loop do
+      params = { size: size, position: position }.merge(opts)
+      new_results = get(path, params)
+      results += new_results
+      break if new_results.length < size
+
+      position += size
+    end
+
+    results
   end
 
   def post path, *args

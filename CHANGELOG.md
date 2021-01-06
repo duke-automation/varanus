@@ -1,3 +1,6 @@
+### Next release
+* Add Varanus::DCV
+
 ### 0.3.1 (2020-10-14)
 * Fix issue when Sectigo reports two identical 'Short Life' certs
 

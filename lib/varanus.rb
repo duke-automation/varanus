@@ -14,6 +14,7 @@ class Varanus
     @password = password
   end
 
+  # :nodoc:
   def connection
     @connection ||= Faraday.new(url: 'https://cert-manager.com/api',
                                 request: { timeout: 300 }) do |conn|
@@ -26,6 +27,12 @@ class Varanus
 
       conn.adapter Faraday.default_adapter
     end
+  end
+
+  # Retrive DCV instance
+  # @return [Varanus::DCV]
+  def dcv
+    @dcv ||= DCV.new(self)
   end
 
   # Retrieve Reports instance
