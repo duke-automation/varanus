@@ -55,6 +55,15 @@ class Varanus::SSL < Varanus::RestResource
     get("ssl/v1/collect/#{id}/#{type}")
   end
 
+  # Returns info on the SSL certificate of the given name
+  def info id
+    get("ssl/v1/#{id}")
+  end
+
+  def list opts = {}
+    get_with_size_and_position('ssl/v1', opts)
+  end
+
   # Revoke an ssl cert
   # @param id [Integer] As returned by {#sign}
   # @param reason [String] Reason for revoking. Sectigo's API will return an error if it

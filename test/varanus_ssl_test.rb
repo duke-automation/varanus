@@ -214,6 +214,31 @@ class VaranusSSLTest < Minitest::Test
     end
   end
 
+  def test_info
+    response = { 'commonName' => 'example.com', 'sslId' => 557, 'orgId' => 442 }
+
+    stub_request(:get, 'https://cert-manager.com/api/ssl/v1/557')
+      .with(headers: @expected_auth_headers)
+      .to_return(status: 200, body: response.to_json,
+                 headers: { 'Content-Type' => 'application/json' })
+
+    assert_equal response, @ssl.info(557)
+  end
+
+  def test_list
+    response = [
+      { 'sslId' => 557, 'commonName' => 'example.com' },
+      { 'sslId' => 27, 'commonName' => 'example.org' }
+    ]
+
+    stub_request(:get, 'https://cert-manager.com/api/ssl/v1?position=0&size=200')
+      .with(headers: @expected_auth_headers)
+      .to_return(status: 200, body: response.to_json,
+                 headers: { 'Content-Type' => 'application/json' })
+
+    assert_equal response, @ssl.list
+  end
+
   def test_revoke
     content_body = { reason: 'Testing' }
     stub_request(:post, 'https://cert-manager.com/api/ssl/v1/revoke/2345')
