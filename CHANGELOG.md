@@ -1,4 +1,4 @@
-### Next version
+### Version 0.5.0 (2021-01-26)
 * Add Varanus::Domain
 * Add Varanus::SSL#list and Varanus::SSL#info
 * Add Varanus::Organization
