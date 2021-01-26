@@ -1,3 +1,6 @@
+### Next version
+* Add Varanus::Domain
+
 ### 0.4.0 (2021-01-06)
 * Add Varanus::DCV
 

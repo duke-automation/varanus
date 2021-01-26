@@ -35,6 +35,12 @@ class Varanus
     @dcv ||= DCV.new(self)
   end
 
+  # Retrieve Domain instance
+  # @return [Varanus::Domain]
+  def domain
+    @domain ||= Domain.new(self)
+  end
+
   # Retrieve Reports instance
   # @return [Varanus::Reports]
   def reports
@@ -58,6 +64,7 @@ require 'savon'
 require 'varanus/error'
 require 'varanus/rest_resource'
 require 'varanus/dcv'
+require 'varanus/domain'
 require 'varanus/reports'
 require 'varanus/ssl'
 require 'varanus/ssl/csr'
