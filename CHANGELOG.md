@@ -1,6 +1,7 @@
 ### Next version
 * Add Varanus::Domain
 * Add Varanus::SSL#list and Varanus::SSL#info
+* Add Varanus::Organization
 
 ### 0.4.0 (2021-01-06)
 * Add Varanus::DCV

@@ -41,6 +41,12 @@ class Varanus
     @domain ||= Domain.new(self)
   end
 
+  # Retrieve Organization instance
+  # @return [Varanus::Organization]
+  def organization
+    @organization ||= Organization.new(self)
+  end
+
   # Retrieve Reports instance
   # @return [Varanus::Reports]
   def reports
@@ -65,6 +71,7 @@ require 'varanus/error'
 require 'varanus/rest_resource'
 require 'varanus/dcv'
 require 'varanus/domain'
+require 'varanus/organization'
 require 'varanus/reports'
 require 'varanus/ssl'
 require 'varanus/ssl/csr'
