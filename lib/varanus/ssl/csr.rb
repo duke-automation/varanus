@@ -87,6 +87,8 @@ class Varanus::SSL::CSR
       @request.public_key.n.num_bytes * 8
     when OpenSSL::PKey::DSA
       @request.public_key.p.num_bytes * 8
+    when OpenSSL::PKey::EC
+      @request.public_key.group.degree
     else
       raise "Unknown public key type: #{@request.public_key.class}"
     end

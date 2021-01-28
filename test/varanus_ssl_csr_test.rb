@@ -99,6 +99,27 @@ class VaranusSSLCSRTest < Minitest::Test
     assert_equal csr_str, csr.to_s
   end
 
+  def test_load_csr_cn_ec_key
+    csr_str = <<~CSR
+      -----BEGIN CERTIFICATE REQUEST-----
+      MIIBFzCBvQIBADBbMQswCQYDVQQGEwJBVTETMBEGA1UECAwKU29tZS1TdGF0ZTEh
+      MB8GA1UECgwYSW50ZXJuZXQgV2lkZ2l0cyBQdHkgTHRkMRQwEgYDVQQDDAtleGFt
+      cGxlLmNvbTBZMBMGByqGSM49AgEGCCqGSM49AwEHA0IABJgqrwrOWaa8b68ioH6q
+      S0PX4WeFdqizByDgxKUYt6OjiON3w7lABPbWF5X5c396ZuMQ5U8pcv4OFg0OWK4j
+      fBegADAKBggqhkjOPQQDAgNJADBGAiEA5XrtjTzOBbLzFlW33F1YzzsskKdMylyu
+      Jvbm+MPTBgsCIQDo+oiePrBUpAsun47UL8iRUCv4tLDyYgcpKkomXsIMHA==
+      -----END CERTIFICATE REQUEST-----
+    CSR
+
+    csr = Varanus::SSL::CSR.new csr_str
+
+    assert_equal 'example.com', csr.cn
+    assert_equal [], csr.subject_alt_names
+    assert_equal ['example.com'], csr.all_names
+    assert_equal 256, csr.key_size
+    assert_equal csr_str, csr.to_s
+  end
+
   def test_load_csr_from_openssl_obj
     csr_str = <<~CSR
       -----BEGIN CERTIFICATE REQUEST-----
