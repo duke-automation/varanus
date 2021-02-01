@@ -3,6 +3,23 @@
 # An connection to the SSL/TSL API.  This should not be initialized directly.  Instead,
 # use Varanus#ssl
 class Varanus::SSL < Varanus::RestResource
+  # rubocop:disable Style/MutableConstant
+  # These constants are frozen, rubocop is failing to detect the freeze.
+  # See https://github.com/rubocop-hq/rubocop/issues/4406
+  REPORT_CERT_STATUS = { any: 0, requested: 1, issued: 2, revoked: 3, expired: 4 }
+  REPORT_CERT_STATUS.default_proc = proc { |_h, k|
+    raise ArgumentError, "Unknown certificateStatus: #{k.inspect}"
+  }
+  REPORT_CERT_STATUS.freeze
+
+  REPORT_CERT_DATE_ATTR = { revocation_date: 2, expiration_date: 3, request_date: 4,
+                            issue_date: 5 }
+  REPORT_CERT_DATE_ATTR.default_proc = proc { |_h, k|
+    raise ArgumentError, "Unknown certificateDateAttribute: #{k.inspect}"
+  }
+  REPORT_CERT_DATE_ATTR.freeze
+  # rubocop:enable Style/MutableConstant
+
   # Returns the option from #certificate_types that best matches the csr.
   # @param csr [Varanus::SSL::CSR]
   # @return [Hash] The option from {#certificate_types} that best matches the csr
@@ -60,8 +77,29 @@ class Varanus::SSL < Varanus::RestResource
     get("ssl/v1/#{id}")
   end
 
+  # List certs ids and serial numbers
   def list opts = {}
     get_with_size_and_position('ssl/v1', opts)
+  end
+
+  # Return a report (list) of SSL certs based on the options.
+  # The report includes a full set of details about the certs, not just the id/cn/serial
+  # +opts+ can include:
+  # (all are optional)
+  # - :organizationIds - Array - ids of organization/departments to include certs for
+  # - :certificateStatus - :any, :requested, :issued, :revoked, or :expired
+  # - :certificateDateAttribute - Specifies what fields :from and/or :to refer to.
+  #                               Can be: :revocation_date, :expiration_date,
+  #                                       :request_date, or :issue_date
+  # - :from - Date - based on :certificateDateAttribute
+  # - :to - Date - based on :certificateDateAttribute
+  def report opts = { certificateStatus: :any }
+    # Default is to request any certificate status since the API call will fail if no
+    # options are passed
+    opts = { certificateStatus: :any } if opts.empty?
+    opts = _parse_report_opts(opts)
+
+    post('report/v1/ssl-certificates', opts)['reports']
   end
 
   # Revoke an ssl cert
@@ -129,5 +167,25 @@ class Varanus::SSL < Varanus::RestResource
     term = opts[:days]
     term ||= certificate_types.find { |ct| ct['id'] == cert_type_id }['terms'].min
     term
+  end
+
+  def _parse_report_opts user_opts
+    api_opts = {}
+    user_opts.each do |key, val|
+      case key
+      when :organizationIds, :certificateRequestSource, :serialNumberFormat
+        api_opts[key] = val
+      when :from, :to
+        api_opts[key] = val.strftime('%Y-%m-%d')
+      when :certificateStatus
+        api_opts[key] = REPORT_CERT_STATUS[val]
+      when :certificateDateAttribute
+        api_opts[key] = REPORT_CERT_DATE_ATTR[val]
+      else
+        raise ArgumentError, "Unknown key: #{key.inspect}"
+      end
+    end
+
+    api_opts
   end
 end

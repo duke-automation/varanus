@@ -239,6 +239,50 @@ class VaranusSSLTest < Minitest::Test
     assert_equal response, @ssl.list
   end
 
+  def test_report_all_the_arguments
+    @expected_body = {
+      organizationIds: [4, 67, 99],
+      certificateStatus: 2,
+      certificateDateAttribute: 3,
+      from: '2020-01-20',
+      to: '2020-05-06'
+    }
+
+    _test_report(organizationIds: [4, 67, 99], certificateStatus: :issued,
+                 certificateDateAttribute: :expiration_date, from: Date.new(2020, 1, 20),
+                 to: Date.new(2020, 5, 6))
+  end
+
+  def test_report_invalid_argument
+    exp = assert_raises(ArgumentError) do
+      @ssl.report(foo: :bar)
+    end
+
+    assert_equal 'Unknown key: :foo', exp.message
+  end
+
+  def test_report_invalid_certificate_date_attribute
+    exp = assert_raises(ArgumentError) do
+      @ssl.report(certificateDateAttribute: :odd_sym)
+    end
+
+    assert_equal 'Unknown certificateDateAttribute: :odd_sym', exp.message
+  end
+
+  def test_report_invalid_certificate_status
+    exp = assert_raises(ArgumentError) do
+      @ssl.report(certificateStatus: :odd_sym)
+    end
+
+    assert_equal 'Unknown certificateStatus: :odd_sym', exp.message
+  end
+
+  def test_report_no_args
+    @expected_body = { certificateStatus: 0 }
+
+    _test_report
+  end
+
   def test_revoke
     content_body = { reason: 'Testing' }
     stub_request(:post, 'https://cert-manager.com/api/ssl/v1/revoke/2345')
@@ -567,5 +611,22 @@ class VaranusSSLTest < Minitest::Test
       cert_types << item
     end
     @ssl.stubs(:certificate_types).returns(cert_types)
+  end
+
+  def _test_report *args
+    @expected_response ||= ['mock array']
+
+    response_body = {
+      'statusCode' => 0,
+      'reports' => @expected_response
+    }
+    req = stub_request(:post, 'https://cert-manager.com/api/report/v1/ssl-certificates')
+          .with(headers: @expected_auth_headers, body: @expected_body.to_json)
+          .to_return(status: 200, body: response_body.to_json,
+                     headers: { 'Content-Type' => 'application/json' })
+
+    assert_equal @expected_response, @ssl.report(*args)
+
+    assert_requested req, times: 1
   end
 end

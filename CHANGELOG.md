@@ -1,3 +1,6 @@
+### Next release
+* Add Varanus::SSL#report
+
 ### Version 0.5.1 (2021-01-28)
 * Varanus::SSL::CSR - support EC certs
 
