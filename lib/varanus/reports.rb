@@ -18,20 +18,19 @@ class Varanus::Reports
     @varanus = varanus
   end
 
+  # DEPRECATED: Please use Varanus::Domain#list_with_info instead.
   def domains
+    warn 'DEPRECATION WARNING: Varanus::Reports#domains is deprecated.  ' \
+         'Use Varanus::Domain#list_with_info instead'
     r = soap_call :get_domain_report, {}
     format_results r[:report_row_domains]
   end
 
-  # Return report on SSL request
-  # @param [opts] [Hash]
-  # @option opts [String, Array] :orgs Name(s) of organizations (departments) to limit
-  #   the report to.  If this is unset, results from all departments are returned.
-  # @option opts [Symbol] :status (:any) One of :any, :requested, :downloaded, :revoked,
-  #   :expired, :pending_download, :not_enrolled.    :downloaded and :pending_download
-  #   mean the cert has been enrolled/signed.
-  # @return [Array<Hash>]
+  # DEPRECATED: Please use Varanus::SSL#report instead.
   def ssl opts = {}
+    warn 'DEPRECATION WARNING: Varanus::Reports#ssl is deprecated.  ' \
+         'Use Varanus::SSL#report instead'
+
     msg = { organizationNames: nil, certificateStatus: 0 }
 
     msg[:organizationNames] = Array(opts[:orgs]).join(',') if opts.include? :orgs

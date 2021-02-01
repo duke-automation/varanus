@@ -47,8 +47,7 @@ class Varanus
     @organization ||= Organization.new(self)
   end
 
-  # Retrieve Reports instance
-  # @return [Varanus::Reports]
+  # DEPRECATED
   def reports
     @reports ||= Reports.new(self)
   end
