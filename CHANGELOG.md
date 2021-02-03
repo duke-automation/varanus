@@ -1,4 +1,4 @@
-### Next version
+### Version 0.7.0 (2020-02-03)
 * Add Varanus::Domain#report
 
 ### Version 0.6.0 (2020-02-01)
