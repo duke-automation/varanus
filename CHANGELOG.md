@@ -1,3 +1,6 @@
+### Next version
+* Add Varanus::Domain#report
+
 ### Version 0.6.0 (2020-02-01)
 * Add Varanus::SSL#report
 * Varanus::Reports (Varanus#reports) is now deprecated.

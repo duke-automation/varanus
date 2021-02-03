@@ -21,7 +21,7 @@ class Varanus::Reports
   # DEPRECATED: Please use Varanus::Domain#list_with_info instead.
   def domains
     warn 'DEPRECATION WARNING: Varanus::Reports#domains is deprecated.  ' \
-         'Use Varanus::Domain#list_with_info instead'
+         'Use Varanus::Domain#report instead'
     r = soap_call :get_domain_report, {}
     format_results r[:report_row_domains]
   end

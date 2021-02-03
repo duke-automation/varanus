@@ -104,4 +104,21 @@ class VaranusDomainTest < Minitest::Test
 
     assert_equal response, @domain.info(557)
   end
+
+  def test_report
+    @expected_response ||= ['mock array']
+
+    response_body = {
+      'statusCode' => 0,
+      'reports' => @expected_response
+    }
+    req = stub_request(:post, 'https://cert-manager.com/api/report/v1/domains')
+          .with(headers: @expected_auth_headers, body: {}.to_json)
+          .to_return(status: 200, body: response_body.to_json,
+                     headers: { 'Content-Type' => 'application/json' })
+
+    assert_equal @expected_response, @domain.report
+
+    assert_requested req, times: 1
+  end
 end

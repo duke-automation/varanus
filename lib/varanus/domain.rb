@@ -39,4 +39,8 @@ class Varanus::Domain < Varanus::RestResource
     domains.map! { |domain| info(domain['id']) }
     domains
   end
+
+  def report
+    post('report/v1/domains', {})['reports']
+  end
 end
