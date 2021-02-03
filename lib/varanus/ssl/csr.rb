@@ -28,7 +28,7 @@ class Varanus::SSL::CSR
     request.add_attribute names_to_san_attribute(names)
     request.public_key = key.public_key
 
-    request.sign(key, OpenSSL::Digest::SHA256.new)
+    request.sign(key, OpenSSL::Digest.new('SHA256'))
 
     [key, Varanus::SSL::CSR.new(request)]
   end
