@@ -587,6 +587,7 @@ class VaranusSSLTest < Minitest::Test
       { 'id' => 228, 'name' => 'TestCompany Unified Communications Certificate (SHA-2)', 'terms' => [365, 730] },
       { 'id' => 229, 'name' => 'Comodo EV Multi Domain SSL (SHA-2)', 'terms' => [365, 730] },
       { 'id' => 98, 'name' => 'Comodo EV Multi Domain SSL', 'terms' => [365, 730] },
+      { 'id' => 230, 'name' => 'Extended Validation Multi Domain SSL', 'terms' => [365, 730] },
       { 'id' => 215, 'name' => 'IGTF Server Cert', 'terms' => [365, 395] },
       { 'id' => 283, 'name' => 'IGTF Multi Domain', 'terms' => [365, 395] },
       { 'id' => 444, 'name' => 'TestCompany SSL (Short Life)', 'terms' => [30, 60, 90] },

@@ -47,7 +47,7 @@ class Varanus::SSL < Varanus::RestResource
   # @return [Array<Hash>]
   def certificate_types_standard days = nil
     types = certificate_types.reject do |ct|
-      ct['name'] =~ /\b(?:EV|ECC|AMT|Elite)\b/
+      ct['name'] =~ /\b(?:EV|Extended Validation|ECC|AMT|Elite)\b/
     end
     types = types.select! { |t| t['terms'].include? days } unless days.nil?
 
