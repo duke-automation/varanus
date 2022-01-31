@@ -1,3 +1,6 @@
+### Version 0.7.1 (2022-01-31)
+* Varanus::SSL#certificate_types_standard - also exclude 'Extended Validation'
+
 ### Version 0.7.0 (2020-02-03)
 * Add Varanus::Domain#report
 
