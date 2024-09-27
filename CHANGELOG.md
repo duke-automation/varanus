@@ -1,3 +1,6 @@
+### Version 0.8.1 (2024-09-27)
+* Fix gem build issues
+
 ### Version 0.8.0 (2024-09-27)
 * Varanus::SSL::CSR - improve support for subclassing
 * Varanus::SSL::CSR.generate - support an EC key being passed in
