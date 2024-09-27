@@ -30,7 +30,7 @@ class Varanus::SSL::CSR
 
     request.sign(key, OpenSSL::Digest.new('SHA256'))
 
-    [key, Varanus::SSL::CSR.new(request)]
+    [key, new(request)]
   end
 
   # :nodoc:

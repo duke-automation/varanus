@@ -3,6 +3,8 @@
 require 'test_helper'
 
 class VaranusSSLCSRTest < Minitest::Test
+  class SubCSR < Varanus::SSL::CSR; end
+
   def test_generate_basic
     key, csr = Varanus::SSL::CSR.generate(['example.com', 'www.example.com'])
 
@@ -14,6 +16,14 @@ class VaranusSSLCSRTest < Minitest::Test
     assert csr.request.verify(csr.request.public_key)
 
     assert_instance_of OpenSSL::PKey::DSA, key
+  end
+
+  def test_generate_subclass
+    # Verify generate will return the subclass
+
+    _, csr = SubCSR.generate(['example.com', 'www.example.com'])
+
+    assert_instance_of SubCSR, csr
   end
 
   def test_generate_with_existing_key
