@@ -26,7 +26,11 @@ class Varanus::SSL::CSR
     request.version = 0
     request.subject = OpenSSL::X509::Name.parse subject.map { |k, v| "/#{k}=#{v}" }.join
     request.add_attribute names_to_san_attribute(names)
-    request.public_key = key.public_key
+    if key.is_a? OpenSSL::PKey::EC
+      request.public_key = key
+    else
+      request.public_key = key.public_key
+    end
 
     request.sign(key, OpenSSL::Digest.new('SHA256'))
 

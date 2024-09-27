@@ -40,6 +40,20 @@ class VaranusSSLCSRTest < Minitest::Test
     assert_equal orig_key, key
   end
 
+  def test_generate_with_existing_key_ec
+    orig_key = OpenSSL::PKey::EC.generate('secp384r1')
+    key, csr = Varanus::SSL::CSR.generate(['example.com', 'www.example.com'], orig_key)
+
+    assert_equal 'example.com', csr.cn
+    assert_equal ['example.com', 'www.example.com'], csr.subject_alt_names
+
+    assert_equal 384, csr.key_size
+    assert_equal csr.request.to_s, csr.to_s
+    assert csr.request.verify(csr.request.public_key)
+
+    assert_equal orig_key, key
+  end
+
   def test_generate_with_subject_data
     key, csr = Varanus::SSL::CSR.generate(['example.com', 'www.example.com'], nil,
                                           'O' => 'Test Company', 'C' => 'US')
