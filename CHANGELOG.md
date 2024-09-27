@@ -1,3 +1,7 @@
+### Version 0.8.0 (2024-09-27)
+* Varanus::SSL::CSR - improve support for subclassing
+* Varanus::SSL::CSR.generate - support an EC key being passed in
+
 ### Version 0.7.1 (2022-01-31)
 * Varanus::SSL#certificate_types_standard - also exclude 'Extended Validation'
 
