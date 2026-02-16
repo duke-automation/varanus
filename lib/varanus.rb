@@ -61,7 +61,6 @@ end
 
 # stdlib/gem requires
 require 'faraday'
-require 'faraday_middleware'
 require 'openssl'
 require 'savon'
 

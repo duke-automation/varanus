@@ -1,3 +1,6 @@
+### Version 0.9.0 (2026-02-16)
+* Use faraday 2.x
+
 ### Version 0.8.1 (2024-09-27)
 * Fix gem build issues
 

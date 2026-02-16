@@ -39,7 +39,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'webmock'
   spec.add_development_dependency 'yard'
 
-  spec.add_runtime_dependency 'faraday'
-  spec.add_runtime_dependency 'faraday_middleware'
+  spec.add_runtime_dependency 'faraday', '~> 2.0'
   spec.add_runtime_dependency 'savon', '~> 2.0'
 end
